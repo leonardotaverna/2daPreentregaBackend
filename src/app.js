@@ -32,7 +32,7 @@ const socketServer = new Server (httpServer);
 socketServer.on ('connection', socket =>{
     console.log("Nuevo cliente conectado:", socket.id);
 
-    socket.on('disconnect', () => {
+    socketServer.on('disconnect', () => {
         console.log('Cliente', socket.id, 'desconectado');
     });
 
@@ -40,10 +40,12 @@ socketServer.on ('connection', socket =>{
 
     socket.on('addProd', async (obj) => {
         console.log('Received data from client:', obj);
+        
         const newProduct = await productsManager.addProduct(obj);
+
         if (!(newProduct instanceof Error)){
             const newProductsArray = await productsManager.getProducts();
-            socket.emit ("addedProd", newProductsArray);
+            socketServer.emit ("addedProd", newProductsArray);
         } else{
             console.error(newProduct);
         }

@@ -31,7 +31,7 @@ class ProductsManager {
 
             const id = products.length === 0 ? 1 : products[products.length - 1].id + 1
 
-            const existingProduct = products.find(product => product.code === code);
+            const existingProduct = await products.find(product => product.code === code);
             if (existingProduct) {
                 console.error('Ya existe un producto con el mismo código');
                 return;
@@ -48,7 +48,7 @@ class ProductsManager {
             };
 
             products.push(product)
-            await promises.writeFile(this.path, JSON.stringify(products))
+            await promises.writeFile(this.path, JSON.stringify (products))
             return product
         } catch (error) {
             return error

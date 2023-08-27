@@ -23,18 +23,19 @@ prodsForm.onsubmit = (e) => {
     };
     
     socketClient.emit("addProd", obj);
-    title.value = '';
+   /* title.value = '';
     description.value = '';
     code.value = '';
     thumbnail.value = '';
     price.value = '';
-    stock.value = '';
+    stock.value = '';*/
     console.log('Form data to be emitted:', obj);
 };
 
-socketClient.on("addedProd", (newProduct) => {
-    console.log('Received new product data from server:', newProduct);
-    const addRow = `
+socketClient.on("addedProd", async (newProductsArray) => {
+    console.log('Received new product data from server:', newProductsArray);
+    const addRow = await newProductsArray.map((newProduct) => {
+        return`
         <tr>
             <td>${newProduct.id}</td>
             <td>${newProduct.title}</td>
@@ -43,8 +44,10 @@ socketClient.on("addedProd", (newProduct) => {
             <td>${newProduct.thumbnail || 'No Thumbnail'}</td>
             <td>${newProduct.price}</td>
             <td>${newProduct.stock}</td>
-        </tr>`;
-    prodsTable.innerHTML += addRow;
+        </tr>`
+    }).join ('');
+        
+    prodsTable.innerHTML = addRow;
 
 });
 
