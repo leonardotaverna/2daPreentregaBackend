@@ -5,13 +5,14 @@ import productsManager from './ProductsManager.js'
 import viewsRouter from './routes/views.router.js';
 import productsRouter from './routes/products.router.js'
 import { Server } from 'socket.io'; 
+import './db/dbConfig.js';
 
 const app = express();
 
 //Express
 app.use (express.json());
-app.use(express.urlencoded({extended:true}));
-app.use(express.static(__dirname + '/public'));
+app.use (express.urlencoded({extended:true}));
+app.use (express.static(__dirname + '/public'));
 
 //Handlebars
 app.engine('handlebars', handlebars.engine());
@@ -20,6 +21,7 @@ app.set('view engine', 'handlebars');
 
 //Hooks
 app.use('/api/views',viewsRouter);
+app.use ('/api/products', productsRouter);
 
 const PORT = 8080
 
