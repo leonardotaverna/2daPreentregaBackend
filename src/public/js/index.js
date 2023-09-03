@@ -22,7 +22,7 @@ prodsForm.onsubmit = (e) => {
         stock: Number(stock.value),
     };
     
-    socketClient.emit("addProd", obj);
+    socketClient.emit("addProd", obj); 
    /* title.value = '';
     description.value = '';
     code.value = '';

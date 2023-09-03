@@ -23,7 +23,7 @@ app.set('view engine', 'handlebars');
 app.use('/api/views',viewsRouter);
 app.use ('/api/products', productsRouter);
 
-const PORT = 8081
+const PORT = 8080
 
 const httpServer = app.listen(PORT,()=>{
     console.log(`Escuchando al puerto ${PORT}`);

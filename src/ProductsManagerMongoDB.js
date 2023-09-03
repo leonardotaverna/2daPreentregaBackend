@@ -59,9 +59,9 @@ class ProductsManagerMongoDB {
         // }
     }
 
-    async getProductById(pid) {
+    async getProductById(id) {
         try {
-            const product = await productsModel.findById(pid)
+            const product = await productsModel.findById(id)
             return product
         } catch (error) {
             return error
