@@ -1,9 +1,11 @@
 import express from 'express';
 import __dirname from './utils.js';
 import handlebars from 'express-handlebars';
-import productsManager from './ProductsManager.js'
+//import productsManager from './ProductsManager.js';
+import productsManagerMongoDB from './ProductsManagerMongoDB.js';
 import viewsRouter from './routes/views.router.js';
-import productsRouter from './routes/products.router.js'
+import productsRouter from './routes/products.router.js';
+import cartsRouter from './routes/carts.router.js';
 import { Server } from 'socket.io'; 
 import './db/dbConfig.js';
 
@@ -19,9 +21,10 @@ app.engine('handlebars', handlebars.engine());
 app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
 
-//Hooks
-app.use('/api/views',viewsRouter);
+//Routes
+app.use ('/api/views',viewsRouter);
 app.use ('/api/products', productsRouter);
+app.use ('/api/carts', cartsRouter);
 
 const PORT = 8080
 
@@ -43,10 +46,10 @@ socketServer.on ('connection', socket =>{
     socket.on('addProd', async (obj) => {
         console.log('Received data from client:', obj);
         
-        const newProduct = await productsManager.addProduct(obj);
+        const newProduct = await productsManagerMongoDB.addProduct(obj);
 
         if (!(newProduct instanceof Error)){
-            const newProductsArray = await productsManager.getProducts();
+            const newProductsArray = await productsManagerMongoDB.getProducts();
             socketServer.emit ("addedProd", newProductsArray);
         } else{
             console.error(newProduct);
@@ -54,9 +57,9 @@ socketServer.on ('connection', socket =>{
     });
 
     socket.on('deleteProd', async (id) => {
-        await productsManager.deleteProduct(Number (id));
+        await productsManagerMongoDB.deleteProduct(Number (id));
 
-        const newProductsArray = await productsManager.getProducts();
+        const newProductsArray = await productsManagerMongoDB.getProducts();
 
         socketServer.emit("deletedProd",await newProductsArray);
     });

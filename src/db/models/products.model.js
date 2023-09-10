@@ -4,7 +4,8 @@ const productsSchema = new mongoose.Schema({
     title:{
         type: String,
         required: true,
-        unique: true
+        unique: true, 
+        index: true
     },
     
     description: {
@@ -15,7 +16,7 @@ const productsSchema = new mongoose.Schema({
     
     price:{
         type: Number,
-        required: true,   
+        required: true
     },
     
     thumbnail:{
@@ -26,7 +27,8 @@ const productsSchema = new mongoose.Schema({
     code:{
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        index: true
     },
     
     stock:{
@@ -37,5 +39,6 @@ const productsSchema = new mongoose.Schema({
 
 })
 
+//productsSchema.plugin(mongoosePaginate)
 
 export const productsModel = mongoose.model('Products', productsSchema)

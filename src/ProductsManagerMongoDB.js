@@ -15,9 +15,9 @@ class ProductsManagerMongoDB {
         }
     }
 
-    async addProduct(objProd) {
+    async addProduct(obj) {
         try {
-            const newProduct = await productsModel.create (objProd)
+            const newProduct = await productsModel.create (obj)
             return newProduct            
         } catch (error) {
             return error
@@ -131,6 +131,15 @@ class ProductsManagerMongoDB {
     //         return error
     //     }
     }
+
+    // async add (products){
+    //     try {
+    //         await productsModel.create(products)
+    //         return 'Products added'
+    //     } catch (error) {
+    //         return error
+    //     }
+    // }
 };
 
 const productsManagerMongoDB = new ProductsManagerMongoDB ()
