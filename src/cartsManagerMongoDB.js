@@ -7,7 +7,7 @@ class CartsManagerMongoDB {
 
     async getCarts() {
         try {
-            const carts = await cartsModel.find({});
+            const carts = await cartsModel.find({}).populate('products.product');
             return carts;
         } catch (error) {
             return error
@@ -28,7 +28,7 @@ class CartsManagerMongoDB {
 
     async getCartById(cid) {
         try {
-            const cart = await cartsModel.findById(cid)
+            const cart = await cartsModel.findById(cid).populate('products.product')
             return cart
         } catch (error) {
             return error
