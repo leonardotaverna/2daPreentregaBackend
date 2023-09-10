@@ -10,16 +10,19 @@ const router = Router()
 //getProducts()
 router.get('/', async (req, res) => {
     try {
-        const products = await productsManagerMongoDB.getProducts()
-        const { limit } = req.query
-        let limitedProds;
-        if (!limit) {
-            limitedProds = products
-        } else {
-            limitedProds = products.slice(0, limit);
-        }
-        res.status(200).json({ message: 'Products', products: limitedProds })
-        console.log('filtered products:', limitedProds);
+        const{limit,page} = req.query;
+        const products = await productsManagerMongoDB.getProducts(limit, page)
+        // const { limit } = req.query
+        // let limitedProds;
+        // if (!limit) {
+        //     limitedProds = products
+        // } else {
+        //     limitedProds = products.slice(0, limit);
+        // }
+        //res.status(200).json({ message: 'Products', products: limitedProds })
+        res.status(200).json({ message: 'Products', products })
+        //console.log('filtered products:', limitedProds);
+        console.log('Products', products);
     } catch (error) {
         res.status(500).json({ error })
     }
