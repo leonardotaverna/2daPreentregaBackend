@@ -12,18 +12,6 @@ class CartsManagerMongoDB {
         } catch (error) {
             return error
         }
-
-
-        // try {
-        //     if (existsSync(this.path)) {
-        //         const data = await promises.readFile(this.path, 'utf-8')
-        //         return JSON.parse(data)
-        //     } else {
-        //         return []
-        //     }
-        // } catch (error) {
-        //     return error
-        //}
     };
 
     async getCartById(cid) {
@@ -33,65 +21,89 @@ class CartsManagerMongoDB {
         } catch (error) {
             return error
         }
-        
-        
-        
-        
-        // try {
-        //     const carts = await this.getCarts()
-        //     const cart = carts.find(cart => cart.id === cid);
-        //     if (cart) {
-        //         return cart;
-        //     } else {
-        //         console.error('Cart Not found');
-        //     }
-
-        // } catch (error) {
-        //     return error
-        // }
     };
 
     async createCart(obj) {
         try {
-            const newCart = await cartsModel.create (obj)
-            return newCart          
+            const newCart = await cartsModel.create(obj)
+            return newCart
         } catch (error) {
             return error
         }
-        
-        // try {
-        //     const carts = await this.getCarts()
-
-        //     const id = carts.length === 0 ? 1 : carts[carts.length - 1].id + 1
-
-        //     const newCart = {
-        //         products: [], 
-        //         id
-        //     };
-
-        //     carts.push(newCart)
-        //     await promises.writeFile(this.path, JSON.stringify(carts));
-        //     return newCart;
-        // } catch (error) {
-        //     return error
-        // }
     };
 
-    async addProductToCart (cartId, prodId){
-        const carts = await this.getCarts()
-        const cart = carts.find(cart => cart.id === cartId)
-        const productIndex = cart.products.findIndex (prod => prod.product === prodId)
-        if (productIndex === -1){
-            cart.products.push ({product:prodId, quantity:1})
-        }else{
-            cart.products[productIndex].quantity++
+    async addProductToCart(cid, pid) {
+        try {
+            const cart = await cartsModel.findById(cid);
+
+            if (!cart) {
+                throw new Error('Cart not found');
+            }
+
+            const productIndex = cart.products.findIndex(prod => prod.product.toString() === pid.toString());
+
+            if (productIndex === -1) {
+                cart.products.push({ product: pid, quantity: 1 });
+            } else {
+                cart.products[productIndex].quantity++;
+            }
+
+            await cart.save();
+
+            return cart;
+        } catch (error) {
+            return error
         }
-        //await promises.writeFile(this.path,JSON.stringify(carts))
-        return cart
-    }
+    };
+
+    async deleteCart(cid) {
+        try {
+            const deleteCart = await cartsModel.findByIdAndDelete(cid)
+            return deleteCart
+        } catch (error) {
+            return error
+        };
+    };
+
+    async deleteProductFromCart(cid, pid) {
+        try {
+            const cart = await cartsModel.findById(cid)
+            if (!cart) throw new Error('Cart not found')
+
+            const deletedProduct = await cartsModel.updateOne({ _id: cid }, { $pull: { products: { product: pid } } })
+
+            return deletedProduct
+
+        } catch (error) {
+            return error
+        }
+    };
+
+    async updateProductQuantity(cid, pid, quantity) {
+        try {
+            const cart = await cartsModel.findById(cid);
+    
+            if (!cart) {
+                throw new Error('Cart not found');
+            }
+    
+            const productIndex = cart.products.findIndex(prod => prod.product.toString() === pid.toString());
+    
+            if (productIndex === -1) {
+                return null;
+            }
+    
+            cart.products[productIndex].quantity = quantity;
+            await cart.save();
+    
+            return cart;
+        } catch (error) {
+            return error;
+        }
+    };
+    
 };
 
-
-const cartsManagerMongoDB = new CartsManagerMongoDB ()
+const cartsManagerMongoDB = new CartsManagerMongoDB()
 
 export default cartsManagerMongoDB

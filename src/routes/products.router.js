@@ -1,7 +1,7 @@
 import { Router } from "express";
 //import productsManager from '../ProductsManager.js'
 import productsManagerMongoDB from "../ProductsManagerMongoDB.js";
-import fs from 'fs';
+//import fs from 'fs';
 import __dirname from '../utils.js';
 
 
@@ -10,18 +10,8 @@ const router = Router()
 //getProducts()
 router.get('/', async (req, res) => {
     try {
-        const{limit,page} = req.query;
-        const products = await productsManagerMongoDB.getProducts(limit, page)
-        // const { limit } = req.query
-        // let limitedProds;
-        // if (!limit) {
-        //     limitedProds = products
-        // } else {
-        //     limitedProds = products.slice(0, limit);
-        // }
-        //res.status(200).json({ message: 'Products', products: limitedProds })
+        const products = await productsManagerMongoDB.getProducts(req.query);
         res.status(200).json({ message: 'Products', products })
-        //console.log('filtered products:', limitedProds);
         console.log('Products', products);
     } catch (error) {
         res.status(500).json({ error })
@@ -74,14 +64,5 @@ router.delete('/:pid', async (req, res) => {
         res.status(500).json({ error })
     }
 });
-
-/*//agregar productos del .json
-const path = __dirname + '/Products.json'
-router.get('/add', async (req, res) => {
-    const productData = await fs.promises.readFile(path, 'utf-8')
-    await productsManagerMongoDB.addProduct(JSON.parse(productData))
-    res.json({ message: 'Products added' })
-})*/
-
 
 export default router;

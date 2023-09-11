@@ -30,7 +30,7 @@ router.get ('/:cid', async (req,res) => {
 router.post('/', async(req, res) => {
     console.log(req.body);
     try {
-        const newCart = await cartsManagerMongoDB.createCart(req.body)
+        const newCart = await cartsManagerMongoDB.createCart(req.params)
         res.status(200).json({message: 'Cart created', cart:newCart}) 
     } catch (error) {
         res.status(500).json ({ error })    
@@ -38,15 +38,58 @@ router.post('/', async(req, res) => {
 });
 
 //addProductToCart
-router.post ('/:cartId/products/:prodId', async (req,res) => {
-    const{cartId, prodId} = req.params
+router.post ('/:cid/products/:pid', async (req,res) => {
+    const{cid, pid} = req.params
     try {
-        const addProductToCart = await cartsManagerMongoDB.addProductToCart(cartId, prodId)
+        const addProductToCart = await cartsManagerMongoDB.addProductToCart(cid, pid)
         res.status (200).json ({message:'Cart products', cart:addProductToCart})
     } catch (error) {
         res.status(500).json ({ error }) 
     }
-})
+});
+
+//deleteCart
+router.delete('/:cid', async (req, res) => {
+    const { cid } = req.params
+    try {
+        const deletedCart = await cartsManagerMongoDB.deleteCart(cid)
+        res.status(200).json({ message: 'Cart deleted', deletedCart })
+    } catch (error) {
+        res.status(500).json({ error })
+    }
+});
+
+//deleteProdFromCart
+router.delete('/:cid/product/:pid', async (req,res) => {
+    const {cid, pid} = req.params
+    try {
+        const deletedProduct = await cartsManagerMongoDB.deleteProductFromCart(cid,pid)
+        res.status(200).json({ message: 'Product deleted form cart', deletedProduct })
+    
+    } catch (error) {
+        res.status(500).json({ error })
+    }
+});
+
+// updateProductQuantity
+router.put('/:cid/products/:pid', async (req, res) => {
+    try {
+        const { cid, pid } = req.params;
+        const { quantity } = req.body;
+
+        const updatedCart = await cartsManagerMongoDB.updateProductQuantity(cid, pid, quantity);
+
+        if (!updatedCart) {
+            return res.status(404).json({ message: 'Cart or product not found' });
+        }
+
+        res.status(200).json({ message: 'Product quantity updated', cart: updatedCart });
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+});
+
+
 
 
 export default router;
